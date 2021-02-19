@@ -1,0 +1,6 @@
+{
+    "require": {
+        "php-amqplib/php-amqplib": "^2.12",
+        "phpunit/phpunit": "^9.3.3"
+    }
+}

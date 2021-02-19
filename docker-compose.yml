@@ -1,0 +1,92 @@
+version: '3.9'
+services:
+
+  #PHP Service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: php:7.4-fpm-alpine
+    container_name: App
+    environment:
+      SERVICE_NAME: app
+      SERVICE_TAGS: dev
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - app-network
+
+  #Nginx Service
+  webserver:
+    image: nginx:alpine
+    container_name: Nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - app-network
+
+  db:   
+    image: mariadb
+    restart: always
+    container_name: MariaDB
+    volumes:
+      - dbdata:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: db_mystore
+      MYSQL_USER: siddhesh
+      MYSQL_ROOT_PASSWORD: demo1234
+
+  adminer:
+    container_name: Adminer
+    image: adminer
+    ports:
+      - 8081:8080
+
+  rabbitmq:
+    hostname: "rabbitpoc"
+    image: "rabbitmq:3-management"
+    container_name: RabbitMQ
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - 'rabbitmq_data:/data'
+    networks:
+        - app-network
+    environment:
+      RABBITMQ_DEFAULT_USER: siddhesh
+      RABBITMQ_DEFAULT_PASS: demo1234
+      RABBITMQ_DEFAULT_VHOST: "/"
+
+  supervisor:
+    container_name: Supervisor
+    image: musurp/php:7.4-cli-supervisor
+    volumes:
+      - ./:/var/www
+      - ./docker/supervisor/conf.d/supervisord.conf:/etc/supervisord.conf
+    networks:
+        - app-network
+
+  composer_installation:
+    container_name: composer_installation
+    working_dir: /var/www/queuepoc
+    image: composer
+    volumes:
+      - ./src:/var/www/queuepoc
+    command: composer install --ignore-platform-reqs
+
+#Docker Networks
+networks:
+  app-network:
+    driver: bridge
+#Volumes
+volumes:
+  dbdata:
+    driver: local
+  rabbitmq_data:
+    driver: local
