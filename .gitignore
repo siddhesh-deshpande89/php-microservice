@@ -2,3 +2,5 @@
 /src/logs
 /logs
 .DS_Store
+/src/storage/cache
+/src/storage/logs

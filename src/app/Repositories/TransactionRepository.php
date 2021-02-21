@@ -3,6 +3,7 @@ namespace App\Repositories;
 
 use App\Helpers\Database;
 use App\Helpers\Cache;
+use App\Helpers\Logger;
 
 class TransactionRepository
 {
@@ -36,8 +37,8 @@ class TransactionRepository
 
             return true;
         } catch (\Exception $ex) {
-            // TODO Log error
-
+            
+            Logger::error('transactions','Error occured in create transaction.',$params);
             return false;
         }
     }
@@ -60,8 +61,8 @@ class TransactionRepository
             Cache::update('transactions', $result);
             return $result;
         } catch (\Exception $ex) {
-            // TODO Log error
-
+            
+            Logger::error('transactions','Error occured in get all transaction.');
             return false;
         }
     }

@@ -5,14 +5,6 @@ use FastRoute\Dispatcher;
 $injector = require ('dependencies.php');
 
 $request = $injector->make('Http\HttpRequest');
-$response = $injector->make('Http\HttpResponse');
-
-// foreach ($response->getHeaders() as $header) {
-
-// header($header, false);
-// }
-
-// echo $response->getContent();
 
 // Routing
 $routeDefinitionCallback = function (RouteCollector $r) {

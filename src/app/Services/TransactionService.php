@@ -4,6 +4,7 @@ namespace App\Services;
 use App\Helpers\Cache;
 use App\Repositories\TransactionRepository;
 use App\Services\MessageBrokers\MessageBrokerService;
+use App\Helpers\Logger;
 
 class TransactionService
 {
@@ -20,7 +21,7 @@ class TransactionService
 
     /**
      * Transaction Service Constructor
-     * 
+     *
      * @param MessageBrokerService $messageBrokerService
      * @param TransactionRepository $transactionRepository
      */
@@ -47,13 +48,21 @@ class TransactionService
         return $this;
     }
 
-    public function insertTransaction(array $params)
+    /**
+     * Insert transaction to database
+     *
+     * @param array $params
+     * @return boolean
+     */
+    public function insertTransaction(array $params): bool
     {
         if (! $this->isDuplicateTransaction($params['sku'], $params['variant_id'])) {
             return $this->transactionRepository->create($params);
         }
 
         // If duplicate log
+        Logger::debug('transactions', 'Duplicate transaction', $params);
+        return false;
     }
 
     /**
@@ -77,21 +86,20 @@ class TransactionService
         }
         return false;
     }
-    
+
     /**
      * Get Existing Transactions
-     * 
+     *
      * @return array
      */
-    protected function getExistingTransactions():array
+    protected function getExistingTransactions(): array
     {
         $transactions = Cache::get('transactions');
-        
-        if(!empty($transactions))
-        {
+
+        if (! empty($transactions)) {
             return $transactions;
         }
-       
+
         // Fetch from Database
         return $this->transactionRepository->getAll();
     }

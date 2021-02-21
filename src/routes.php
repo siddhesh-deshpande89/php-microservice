@@ -7,5 +7,13 @@ return [
             'App\Controllers\TransactionController',
             'queueTransaction'
         ]
+    ],
+    [
+        'POST',
+        '/test',
+        [
+            'App\Controllers\TransactionController',
+            'insertTransaction'
+        ]
     ]
 ];

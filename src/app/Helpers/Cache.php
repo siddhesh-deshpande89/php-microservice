@@ -37,8 +37,23 @@ class Cache
     }
 
     /**
+     * Create cache file
+     *
+     * @throws \Exception
+     */
+    protected static function createCacheDirectory()
+    {
+        $dir = dirname(__DIR__) . "/../storage/cache";
+
+        // Check if directory /logs exists
+        if (! file_exists($dir)) {
+            mkdir($dir, 0777, true);
+        }
+    }
+
+    /**
      * Checks if element of array is another array
-     * 
+     *
      * @param array $data
      * @return bool
      */
@@ -93,6 +108,8 @@ class Cache
     protected function writeCache(string $filePath, string $data): bool
     {
         try {
+
+            self::createCacheDirectory();
 
             file_put_contents($filePath, $data);
 

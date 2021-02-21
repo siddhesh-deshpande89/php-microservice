@@ -33,4 +33,14 @@ class TransactionController
 
         return ApiResponse::json($response['status'], $response['message'], $response['data']);
     }
+    
+    public function insertTransaction()
+    {
+        $params['id'] = $this->request->getParameter('id');
+        $params['sku'] = $this->request->getParameter('sku');
+        $params['variant_id'] = $this->request->getParameter('variant_id');
+        $params['title'] = $this->request->getParameter('title');
+        
+        $this->transactionService->insertTransaction($params);
+    }
 }
