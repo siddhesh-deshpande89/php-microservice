@@ -1,25 +1,29 @@
 <?php
 namespace App\Controllers;
 
-use App\Helpers\MessageBrokers\MessageBroker;
+use App\Services\MessageBrokers\MessageBrokerService;
 use Http\Request;
 use Http\Response;
+
 class WorkerController
 {
+
     private $request;
-    
+
     private $response;
-    
+
+    private $messageBrokerService;
+
     /**
      * ProductController Constructor
      */
-    public function __construct(MessageBroker $messageBroker, Request $request, Response $response)
+    public function __construct(MessageBrokerService $messageBrokerService, Request $request, Response $response)
     {
-        $this->messageBroker = $messageBroker;
+        $this->messageBrokerService = $messageBrokerService;
         $this->request = $request;
         $this->response = $response;
     }
-    
+
     public function processTransactions()
     {
         echo "hi";

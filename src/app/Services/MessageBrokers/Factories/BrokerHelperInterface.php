@@ -1,5 +1,5 @@
 <?php
-namespace App\Helpers\MessageBrokers\Factories;
+namespace App\Services\MessageBrokers\Factories;
 
 interface BrokerHelperInterface {
 
@@ -13,8 +13,22 @@ interface BrokerHelperInterface {
      * @return void
      */
     public function connect(string $host, int $port, string $username, string $password): void;
-
+    
+    /**
+     * Connect to channel
+     *
+     * @param string queueName
+     * @param array $params
+     * @return void
+     */
     public function publish(string $queueName, array $params);
 
-    public function close() : void;
+    /**
+     * Close connection to channel
+     *
+     * @param string queueName
+     * @param array $params
+     * @return void
+     */
+    public function close(): void;
 }

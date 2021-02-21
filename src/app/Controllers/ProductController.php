@@ -1,27 +1,24 @@
 <?php
 namespace App\Controllers;
 
-use App\Helpers\MessageBrokers\MessageBroker;
 use Http\Request;
-use Http\Response;
+use App\Services\MessageBrokers\MessageBrokerService;
+use App\Helpers\ApiResponse;
 
 class ProductController
 {
 
     private $request;
 
-    private $response;
-
-    private $messageBroker;
+    private $messageBrokerService;
 
     /**
      * ProductController Constructor
      */
-    public function __construct(MessageBroker $messageBroker, Request $request, Response $response)
+    public function __construct(MessageBrokerService $messageBrokerService, Request $request)
     {
-        $this->messageBroker = $messageBroker;
+        $this->messageBrokerService = $messageBrokerService;
         $this->request = $request;
-        $this->response = $response;
     }
 
     /**
@@ -29,8 +26,11 @@ class ProductController
      */
     public function insert()
     {
-        $options['sku'] = $this->request->getParameter('sku');
+        $params['sku'] = $this->request->getParameter('sku');
 
-        $this->messageBroker->publish('product_queue', $options);
+        // TODO validate request params
+        $response = $this->messageBrokerService->publish('product_queue', $params)->handleApiResponse();
+
+        ApiResponse::json($response['status'], $response['message'], $response['data']);
     }
 }

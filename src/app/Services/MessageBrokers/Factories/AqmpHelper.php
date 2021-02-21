@@ -1,5 +1,5 @@
 <?php
-namespace App\Helpers\MessageBrokers\Factories;
+namespace App\Services\MessageBrokers\Factories;
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -44,8 +44,7 @@ class AqmpHelper implements BrokerHelperInterface
     /**
      * Connect to channel
      *
-     * @param
-     *            string queueName
+     * @param string queueName
      * @param array $params
      * @return void
      */
@@ -55,18 +54,13 @@ class AqmpHelper implements BrokerHelperInterface
 
         $msg = new AMQPMessage(json_encode($params));
         $this->channel->basic_publish($msg, '', $queueName);
-        
-        // TODO fix response
-        echo " [x] Sent 'Hello World!'\n";
-
         $this->close();
     }
 
     /**
      * Close connection to channel
      *
-     * @param
-     *            string queueName
+     * @param string queueName
      * @param array $params
      * @return void
      */

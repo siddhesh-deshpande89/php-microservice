@@ -20,6 +20,7 @@ services:
 
   #Nginx Service
   webserver:
+    hostname: microlocal
     image: nginx:alpine
     container_name: Nginx
     ports:

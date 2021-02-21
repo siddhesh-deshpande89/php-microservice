@@ -7,11 +7,12 @@ $injector = require ('dependencies.php');
 $request = $injector->make('Http\HttpRequest');
 $response = $injector->make('Http\HttpResponse');
 
-foreach ($response->getHeaders() as $header) {
-    header($header, false);
-}
+// foreach ($response->getHeaders() as $header) {
 
-echo $response->getContent();
+//     header($header, false);
+// }
+
+// echo $response->getContent();
 
 // Routing
 $routeDefinitionCallback = function (RouteCollector $r) {
@@ -27,14 +28,13 @@ $routeInfo = $dispatcher->dispatch($request->getMethod(), $request->getPath());
 
 switch ($routeInfo[0]) {
     case Dispatcher::NOT_FOUND:
-        $response->setContent('404 - Page not found');
-        $response->setStatusCode(404);
+        http_response_code(404);
         break;
     case Dispatcher::METHOD_NOT_ALLOWED:
-        $response->setContent('405 - Method not allowed');
-        $response->setStatusCode(405);
+        http_response_code(405);
         break;
     case Dispatcher::FOUND:
+        
         $className = $routeInfo[1][0];
 
         $method = $routeInfo[1][1];
