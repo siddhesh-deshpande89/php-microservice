@@ -60,7 +60,7 @@ class MessageBrokerService
     {
         $this->instantiate($this->default)->publish($queueName, $params);
 
-        $this->message = 'Transaction done successfully.';
+        $this->message = 'Message published successfully.';
         $this->data = $params;
 
         return $this;

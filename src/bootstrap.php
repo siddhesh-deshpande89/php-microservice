@@ -9,7 +9,7 @@ $response = $injector->make('Http\HttpResponse');
 
 // foreach ($response->getHeaders() as $header) {
 
-//     header($header, false);
+// header($header, false);
 // }
 
 // echo $response->getContent();
@@ -34,7 +34,7 @@ switch ($routeInfo[0]) {
         http_response_code(405);
         break;
     case Dispatcher::FOUND:
-        
+
         $className = $routeInfo[1][0];
 
         $method = $routeInfo[1][1];

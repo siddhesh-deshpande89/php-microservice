@@ -4,8 +4,8 @@ return [
         'POST',
         '/transactions',
         [
-            'App\Controllers\ProductController',
-            'insert'
+            'App\Controllers\TransactionController',
+            'queueTransaction'
         ]
     ]
 ];

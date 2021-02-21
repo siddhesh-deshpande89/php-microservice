@@ -9,7 +9,7 @@ class TransactionTest extends TestCase
     /** 
      * @test 
      * */
-    public function publishTransaction()
+    public function queueTransaction()
     {
         $this->assertTrue(true);
     }

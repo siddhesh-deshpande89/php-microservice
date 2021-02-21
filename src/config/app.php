@@ -3,6 +3,7 @@ return [
     'APP_URL' => 'http://microlocal',
 
     // Database
+    'DATABASE_DRIVER' => 'mysql',
     'DATABASE_HOST' => 'mydbhost',
     'DATABASE_PORT' => 3306,
     'DATABASE_USER' => 'root',

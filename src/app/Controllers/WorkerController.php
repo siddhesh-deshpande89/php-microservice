@@ -15,7 +15,7 @@ class WorkerController
     private $messageBrokerService;
 
     /**
-     * ProductController Constructor
+     * TransactionController Constructor
      */
     public function __construct(MessageBrokerService $messageBrokerService, Request $request, Response $response)
     {

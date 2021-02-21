@@ -8,7 +8,8 @@
         "robmorgan/phinx": "^0.12.5",
         "fzaninotto/faker": "^1.9",
         "ramsey/uuid": "^4.1",
-        "guzzlehttp/guzzle": "^7.2"
+        "guzzlehttp/guzzle": "^7.2",
+        "usmanhalalit/pixie": "^2.0"
     },
     "autoload": {
         "psr-4": {
