@@ -39,8 +39,8 @@ class MessageBroker
      * @param array $params
      * @return array
      */
-    public function publish(string $queueName, array $params)
+    public function publish(string $queueName, array $options)
     {
-        return $this->instantiate($this->default)->publish($queueName, $params);
+        return $this->instantiate($this->default)->publish($queueName, $options);
     }
 }

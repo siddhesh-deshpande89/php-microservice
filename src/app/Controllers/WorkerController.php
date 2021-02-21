@@ -4,16 +4,12 @@ namespace App\Controllers;
 use App\Helpers\MessageBrokers\MessageBroker;
 use Http\Request;
 use Http\Response;
-
-class ProductController
+class WorkerController
 {
-
     private $request;
-
+    
     private $response;
-
-    private $messageBroker;
-
+    
     /**
      * ProductController Constructor
      */
@@ -23,14 +19,9 @@ class ProductController
         $this->request = $request;
         $this->response = $response;
     }
-
-    /**
-     * Insert request
-     */
-    public function insert()
+    
+    public function processTransactions()
     {
-        $options['sku'] = $this->request->getParameter('sku');
-
-        $this->messageBroker->publish('product_queue', $options);
+        echo "hi";
     }
 }

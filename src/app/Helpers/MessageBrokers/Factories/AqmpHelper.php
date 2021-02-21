@@ -53,8 +53,10 @@ class AqmpHelper implements BrokerHelperInterface
     {
         $this->channel->queue_declare($queueName, false, false, false, false);
 
-        $msg = new AMQPMessage('Execute Transaction');
-        $this->channel->basic_publish($msg, '', 'product_queue');
+        $msg = new AMQPMessage(json_encode($params));
+        $this->channel->basic_publish($msg, '', $queueName);
+        
+        // TODO fix response
         echo " [x] Sent 'Hello World!'\n";
 
         $this->close();
