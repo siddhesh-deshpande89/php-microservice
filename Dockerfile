@@ -25,7 +25,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
-RUN docker-php-ext-install sockets
+RUN docker-php-ext-install sockets mysqli pdo pdo_mysql
 
 # Add user for laravel application
 RUN groupadd -g 1000 www

@@ -30,22 +30,29 @@ services:
     networks:
       - app-network
 
-  db:   
+  db:
+    hostname: "mydbhost"
     image: mariadb
-    restart: always
     container_name: MariaDB
     volumes:
       - dbdata:/var/lib/mysql
     environment:
-      MYSQL_DATABASE: db_mystore
-      MYSQL_USER: siddhesh
       MYSQL_ROOT_PASSWORD: demo1234
+      MYSQL_DATABASE: db_mystore
+    ports:
+      - "3307:3306"
+    networks:
+      - app-network
 
   adminer:
     container_name: Adminer
     image: adminer
     ports:
       - 8081:8080
+    networks:
+      - app-network
+    depends_on: 
+      - db
 
   rabbitmq:
     hostname: "rabbitpoc"
