@@ -77,7 +77,7 @@ the credentials from docker-compose.yml file.
 ## Challenge 2: Transaction Processing Worker
 We need to process the message queue. For this we use a process manager named Supervisor.
 
-<img src="https://i.imgur.com/CxG6hgj.png" widith="300" height="200" />
+<img src="https://i.imgur.com/nH2TR9w.png" widith="300" height="200" />
 
 Edit the ```numprocs=1``` config in ```docker/supervisor/config.d/supervisord.conf``` file if you want to increase or decrease number of workers.
 
@@ -88,7 +88,7 @@ Although unnecessary, to test the worker manually, simply run ```php src/worker.
 
 ## Transaction Duplication Check: Filesystem Cache
 Since we will process more than 100000 transactions per minute, we must avoid querying the database as much as possible.
-For this purpose I have used custom filesystem caching. The cache file exists in ```src/storage/cache```
+For this purpose, I have used custom filesystem caching. The cache file exists in ```src/storage/cache```
 
 The worker interacts with Cache layer rather than Database layer. In the future we can move filesystem to Redis cache as well.
 
@@ -105,3 +105,10 @@ For stress testing I used Guzzle library for HTTP requests which allows asynchro
 To increase concurrency and number of requests simply edit the ```src/worker.php```
 
 In the future I will improve this to use multithreaded approach using python script.
+
+### Unit Tests and Integration Tests
+
+To run tests go to CLI of App container and type ```vendor/bin/phpunit tests --testdox```
+
+<img src="https://i.imgur.com/shPFFjl.png" widith="300" height="200" />
+
