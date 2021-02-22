@@ -10,7 +10,7 @@ class Config
      * @param string $key
      * @return mixed
      */
-    public function get(string $key)
+    public static function get(string $key)
     {
         $config = require dirname(__DIR__) . '/../config/app.php';
 

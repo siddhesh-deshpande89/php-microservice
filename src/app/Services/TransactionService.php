@@ -51,7 +51,7 @@ class TransactionService
     /**
      * Processes all transactions in a queue
      */
-    public function processTransaction()
+    public function processTransactions()
     {
         $this->messageBrokerService->consume('product_queue', [
             $this,
@@ -66,17 +66,22 @@ class TransactionService
      */
     public function workerCallback($message)
     {
-        $transaction = json_decode($message->body, true);
+        try {
+            $transaction = json_decode($message->body, true);
 
-        Logger::info('worker', 'Transaction received', [
-            'content' => $transaction
-        ]);
+            Logger::info('worker', 'Transaction received', [
+                'content' => $transaction
+            ]);
 
-        $this->insertTransaction($transaction);
+            $this->insertTransaction($transaction);
 
-        echo ' [x] Received ', $message->body, "\n";
-        sleep(substr_count($message->body, '.'));
-        echo " [x] Done\n";
+            echo ' [x] Received ', $message->body, "\n";
+            sleep(substr_count($message->body, '.'));
+            echo " [x] Done\n";
+        } catch (\Exception $ex) {
+            
+            Logger:error('worker', 'Error in transaction',['content' => $message->body]);
+        }
     }
 
     /**

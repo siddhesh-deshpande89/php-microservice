@@ -40,6 +40,7 @@ class TransactionController
     public function __construct(TransactionService $transactionService, Request $request, Validator $validator)
     {
         $this->transactionService = $transactionService;
+
         $this->request = $request;
         $this->validator = $validator;
     }
@@ -88,15 +89,5 @@ class TransactionController
         $response = $this->transactionService->queueTransaction($params)->handleApiResponse();
 
         return ApiResponse::json($response['status'], $response['message'], $response['data']);
-    }
-
-    /**
-     * Method for background worker
-     */
-    public function processTransactions()
-    {
-        echo "Processing Started..." . PHP_EOL;
-
-        $this->transactionService->processTransaction();
     }
 }

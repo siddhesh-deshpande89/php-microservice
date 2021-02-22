@@ -15,5 +15,4 @@ $injector->define('Http\HttpRequest', [
 $injector->alias('Http\Response', 'Http\HttpResponse');
 $injector->share('Http\HttpResponse');
 
-$injector->share('App\Controllers\WorkerController');
 return $injector;

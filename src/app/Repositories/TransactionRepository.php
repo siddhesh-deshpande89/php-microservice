@@ -9,6 +9,7 @@ class TransactionRepository
 {
 
     private $database;
+    private $table = 'transactions';
 
     public function __construct(Database $database)
     {
@@ -24,7 +25,7 @@ class TransactionRepository
     public function create(array $params): bool
     {
         try {
-            $sql = "INSERT INTO `transactions` (id, sku, variant_id, title) VALUES (:id, :sku, :variant_id, :title)";
+            $sql = "INSERT INTO `$this->table` (id, sku, variant_id, title) VALUES (:id, :sku, :variant_id, :title)";
             $query = $this->database->prepare($sql);
             $query->bindParam(":id", $params['id']);
             $query->bindParam(":sku", $params['sku']);
@@ -51,7 +52,7 @@ class TransactionRepository
     public function getAll()
     {
         try {
-            $sql = "SELECT id, sku, variant_id, title FROM `transactions`";
+            $sql = "SELECT id, sku, variant_id, title FROM `$this->table`";
             $query = $this->database->prepare($sql);
             $query->execute();
 
