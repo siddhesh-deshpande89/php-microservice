@@ -7,31 +7,43 @@ use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 
-$client = new Client();
+/**
+ * This is a standalone script to stress test transactions
+ *
+ * @author Siddhesh
+ */
+class StressTest
+{
 
-// TODO fix script
-$requests = function ($total) {
-    $uri = 'http://devlocal/transactions.php';
-    for ($i = 0; $i < $total; $i ++) {
-        yield new Request('POST', $uri);
+    public function run()
+    {
+        $client = new Client();
+
+        // TODO fix script
+        $requests = function ($total) {
+            $uri = 'http://devlocal/transactions';
+            for ($i = 0; $i < $total; $i ++) {
+                yield new Request('POST', $uri);
+            }
+        };
+
+        $pool = new Pool($client, $requests(10000), [
+            'concurrency' => 500,
+            'fulfilled' => function (Response $response, $index) {
+                // this is delivered each successful response
+            },
+            'rejected' => function (RequestException $reason, $index) {
+                // this is delivered each failed request
+            }
+        ]);
+
+        // Initiate the transfers and create a promise
+        $promise = $pool->promise();
+
+        // Force the pool of requests to complete.
+        $promise->wait();
     }
-};
+}
 
-$pool = new Pool($client, $requests(10000), [
-    'concurrency' => 500,
-    'fulfilled' => function (Response $response, $index) {
-        // this is delivered each successful response
-    },
-    'rejected' => function (RequestException $reason, $index) {
-        // this is delivered each failed request
-    }
-]);
-
-// Initiate the transfers and create a promise
-$promise = $pool->promise();
-
-// Force the pool of requests to complete.
-$promise->wait();
-// $response = $client->request('GET', 'http://devlocal/transactions.php');
-
-?>
+$stressTest = new StressTest();
+$stressTest->run();

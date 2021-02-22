@@ -89,4 +89,14 @@ class TransactionController
 
         return ApiResponse::json($response['status'], $response['message'], $response['data']);
     }
+
+    /**
+     * Method for background worker
+     */
+    public function processTransactions()
+    {
+        echo "Processing Started..." . PHP_EOL;
+
+        $this->transactionService->processTransaction();
+    }
 }

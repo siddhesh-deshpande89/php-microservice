@@ -49,6 +49,37 @@ class TransactionService
     }
 
     /**
+     * Processes all transactions in a queue
+     */
+    public function processTransaction()
+    {
+        $this->messageBrokerService->consume('product_queue', [
+            $this,
+            'workerCallback'
+        ]);
+    }
+
+    /**
+     * Transaction Worker callback
+     *
+     * @param object $message
+     */
+    public function workerCallback($message)
+    {
+        $transaction = json_decode($message->body, true);
+
+        Logger::info('worker', 'Transaction received', [
+            'content' => $transaction
+        ]);
+
+        $this->insertTransaction($transaction);
+
+        echo ' [x] Received ', $message->body, "\n";
+        sleep(substr_count($message->body, '.'));
+        echo " [x] Done\n";
+    }
+
+    /**
      * Insert transaction to database
      *
      * @param array $params

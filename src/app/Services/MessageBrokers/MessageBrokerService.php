@@ -65,6 +65,11 @@ class MessageBrokerService
 
         return $this;
     }
+    
+    public function consume(string $queueName,array $callback)
+    {
+        $this->instantiate($this->default)->consume($queueName, $callback);
+    }
 
     /**
      * Handles api response for this service
