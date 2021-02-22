@@ -33,7 +33,35 @@ class VariantRepository
             return $result;
         } catch (\Exception $ex) {
 
-            Logger::error('variants', 'Error occured in get all products.');
+            Logger::error('variants', 'Error occured in get random variant.', [
+                'message' => $ex->getMessage()
+            ]);
+            return false;
+        }
+    }
+
+    /**
+     * Checks if variant id exists
+     *
+     * @param string $variantId
+     * @return bool
+     */
+    public function checkExistsById(string $variantId): bool
+    {
+        try {
+            $sql = "select count(*) from `$this->table` where `id`=:id";
+            $stm = $this->database->prepare($sql);
+            $stm->bindParam(':id', $variantId);
+            $stm->execute();
+            $result = $stm->fetchColumn();
+
+            return ($result > 0) ? true : false;
+        } catch (\Exception $ex) {
+
+            Logger::error('variants', 'Error occured in check exists by id.', [
+                'variant_id' => $variantId,
+                'message' => $ex->getMessage()
+            ]);
             return false;
         }
     }

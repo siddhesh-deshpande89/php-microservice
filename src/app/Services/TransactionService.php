@@ -5,6 +5,8 @@ use App\Helpers\Cache;
 use App\Repositories\TransactionRepository;
 use App\Services\MessageBrokers\MessageBrokerService;
 use App\Helpers\Logger;
+use App\Repositories\ProductRepository;
+use App\Repositories\VariantRepository;
 
 class TransactionService
 {
@@ -22,6 +24,20 @@ class TransactionService
      * @var $transactionRepository
      */
     private $transactionRepository;
+
+    /**
+     * Product Repository
+     * 
+     * @var $productRepository
+     */
+    private $productRepository;
+
+    /**
+     * Variant Repository
+     * 
+     * @var $variantRepository
+     */
+    private $variantRepository;
 
     /**
      * Status of response
@@ -46,7 +62,7 @@ class TransactionService
 
     /**
      * Queue name for transactions
-     * 
+     *
      * @var string
      */
     private $queueName = 'transactions_queue';
@@ -57,10 +73,12 @@ class TransactionService
      * @param MessageBrokerService $messageBrokerService
      * @param TransactionRepository $transactionRepository
      */
-    public function __construct(MessageBrokerService $messageBrokerService, TransactionRepository $transactionRepository)
+    public function __construct(MessageBrokerService $messageBrokerService, TransactionRepository $transactionRepository, ProductRepository $productRepository, VariantRepository $variantRepository)
     {
         $this->messageBrokerService = $messageBrokerService;
         $this->transactionRepository = $transactionRepository;
+        $this->productRepository = $productRepository;
+        $this->variantRepository = $variantRepository;
     }
 
     /**
@@ -131,12 +149,38 @@ class TransactionService
     public function insertTransaction(array $params): bool
     {
         if (! $this->isDuplicateTransaction($params['sku'], $params['variant_id'])) {
-            return $this->transactionRepository->create($params);
+
+            if ($this->productExists($params['sku']) && $this->variantExists($params['variant_id'])) {
+
+                return $this->transactionRepository->create($params);
+            }
         }
 
         // If duplicate log
         Logger::debug('transactions', 'Duplicate transaction', $params);
         return false;
+    }
+
+    /**
+     * Checks if product exists
+     * 
+     * @param int $sku
+     * @return bool
+     */
+    public function productExists(int $sku): bool
+    {
+        return $this->productRepository->checkExistsById($sku);
+    }
+
+    /**
+     * Checks if variant exists
+     * 
+     * @param string $variantId
+     * @return bool
+     */
+    public function variantExists(string $variantId): bool
+    {
+        return $this->variantRepository->checkExistsById($variantId);
     }
 
     /**

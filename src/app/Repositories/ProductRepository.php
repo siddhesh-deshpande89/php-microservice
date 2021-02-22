@@ -29,11 +29,39 @@ class ProductRepository
             $query->execute();
 
             $result = $query->fetchAll(\PDO::FETCH_ASSOC);
-           
+
             return $result;
         } catch (\Exception $ex) {
 
-            Logger::error('products', 'Error occured in get all products.');
+            Logger::error('products', 'Error occured in get all products.',[
+                'message' => $ex->getMessage()
+            ]);
+            return false;
+        }
+    }
+
+    /**
+     * Checks if product sku exists
+     *
+     * @param int $sku
+     * @return bool
+     */
+    public function checkExistsById(int $sku): bool
+    {
+        try {
+            $sql = "select count(*) from `$this->table` where `sku`=:sku";
+            $stm = $this->database->prepare($sql);
+            $stm->bindParam(':sku', $sku);
+            $stm->execute();
+            $result = $stm->fetchColumn();
+
+            return ($result > 0) ? true : false;
+        } catch (\Exception $ex) {
+
+            Logger::error('products', 'Error occured in check exists by id.', [
+                'sku' => $sku,
+                'message' => $ex->getMessage()
+            ]);
             return false;
         }
     }
