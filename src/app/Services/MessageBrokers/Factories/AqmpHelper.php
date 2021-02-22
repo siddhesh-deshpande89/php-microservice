@@ -44,8 +44,7 @@ class AqmpHelper implements BrokerHelperInterface
     /**
      * Connect to channel
      *
-     * @param
-     *            string queueName
+     * @param string queueName
      * @param array $params
      * @return void
      */
@@ -58,25 +57,28 @@ class AqmpHelper implements BrokerHelperInterface
         $this->close();
     }
 
+    /**
+     * Consume messages from channel
+     * 
+     * @param string $queueName
+     * @param array $callback
+     */
     public function consume(string $queueName, array $callback)
     {
-       
         $this->channel->basic_consume($queueName, '', false, true, false, false, function ($message) use ($callback) {
             $name = $callback[1];
             $callback[0]->$name($message);
         });
-        
-            while(count($this->channel->callbacks)) {
-                $this->channel->wait();
-            } 
+
+        while (count($this->channel->callbacks)) {
+            $this->channel->wait();
+        }
     }
 
-   
     /**
      * Close connection to channel
      *
-     * @param
-     *            string queueName
+     * @param string queueName
      * @param array $params
      * @return void
      */

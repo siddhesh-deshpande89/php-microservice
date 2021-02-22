@@ -2,7 +2,6 @@
 namespace App\Helpers;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
 
 class Request
 {
@@ -19,10 +18,15 @@ class Request
     {
         $client = new Client();
 
+        if (strtolower($method) == 'post') {
+            $params = [
+                'json' => $params
+            ];
+        }
         try {
             $params['http_errors'] = false;
             return $client->request($method, $url, $params);
-        } catch (RequestException $ex) {
+        } catch (\Exception $ex) {
 
             Logger::error('requests', 'Error in request helper', [
                 'message' => $ex->getMessage(),
@@ -38,6 +42,8 @@ class Request
      */
     public function getParameters(): array
     {
-        return array_map('trim', $_REQUEST);
+        $params = (! empty($_REQUEST)) ? $_REQUEST : json_decode(file_get_contents("php://input"), true);
+
+        return array_map('trim', $params);
     }
 }

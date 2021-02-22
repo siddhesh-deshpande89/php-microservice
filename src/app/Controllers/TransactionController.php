@@ -1,6 +1,7 @@
 <?php
 namespace App\Controllers;
 
+use App\Helpers\Logger;
 use App\Helpers\Request;
 use App\Helpers\ApiResponse;
 use App\Services\TransactionService;
@@ -50,7 +51,7 @@ class TransactionController
      *
      * @return
      */
-    private function validateQueueRequest(): array
+    private function validateQueueRequest(array $params): array
     {
         $rules = [
             'sku' => [
@@ -70,7 +71,7 @@ class TransactionController
             ]
         ];
 
-        return $this->validator->validate($rules);
+        return $this->validator->validate($params, $rules);
     }
 
     /**
@@ -78,14 +79,18 @@ class TransactionController
      */
     public function queueTransaction()
     {
-        $validation = $this->validateQueueRequest();
+        $params = $this->request->getParameters();
+
+        $validation = $this->validateQueueRequest($params);
 
         if ($this->validator->hasErrors($validation)) {
 
+            Logger::info('transaction-api', 'Invalid input data', [
+                $params
+            ]);
             return ApiResponse::json(ApiResponse::HTTP_BAD_REQUEST, 'Invalid input data', $validation);
         }
 
-        $params = $this->request->getParameters();
         $response = $this->transactionService->queueTransaction($params)->handleApiResponse();
 
         return ApiResponse::json($response['status'], $response['message'], $response['data']);

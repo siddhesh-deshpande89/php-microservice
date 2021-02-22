@@ -7,13 +7,26 @@ use App\Repositories\VariantRepository;
 class TransactionFactory
 {
 
+    /**
+     * Transactions factory constructor
+     *
+     * @param ProductRepository $productRepository
+     * @param VariantRepository $variantRepository
+     */
     public function __construct(ProductRepository $productRepository, VariantRepository $variantRepository)
     {
         $this->productRepository = $productRepository;
         $this->variantRepository = $variantRepository;
     }
 
-    public function createValidTransaction(array $products, array $variants)
+    /**
+     * Creates transactions which are valid for database
+     *
+     * @param array $products
+     * @param array $variants
+     * @return array
+     */
+    public function createValidTransaction(array $products, array $variants): array
     {
         $product = $this->getRandomData($products);
         $variant = $this->getRandomData($variants);
@@ -26,7 +39,13 @@ class TransactionFactory
         ];
     }
 
-    public function createValidTransactions($count)
+    /**
+     * Indicates how many valid transactions to create
+     *
+     * @param int $count
+     * @return array
+     */
+    public function createValidTransactions($count): array
     {
         $products = $this->productRepository->getRandomProducts(50);
         $variants = $this->variantRepository->getRandomVariants(50);
@@ -40,7 +59,13 @@ class TransactionFactory
         return $data;
     }
 
-    private function getRandomData(array $data)
+    /**
+     * Get random data from an array
+     *
+     * @param array $data
+     * @return array
+     */
+    private function getRandomData(array $data): array
     {
         $k = array_rand($data);
         return $data[$k];

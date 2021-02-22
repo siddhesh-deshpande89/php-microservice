@@ -12,8 +12,11 @@ use App\Helpers\Config;
 class StressTestService
 {
 
-    private $requests = 100;
-
+    /**
+     * Transaction factory
+     *
+     * @var $transactionFactory
+     */
     private $transactionFactory;
 
     /**

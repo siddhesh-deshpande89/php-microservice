@@ -13,9 +13,9 @@ class Logger
      * @param string $message
      * @param array $context
      */
-    public static function debug(string $channel, string $message, array $context = [])
+    public static function debug(string $channel, string $message, array $context = []): bool
     {
-        self::prepareLog($channel,'DEBUG', $message, $context);
+        return self::prepareLog($channel, 'DEBUG', $message, $context);
     }
 
     /**
@@ -25,9 +25,9 @@ class Logger
      * @param string $message
      * @param array $context
      */
-    public static function error(string $channel, string $message, array $context = [])
+    public static function error(string $channel, string $message, array $context = []): bool
     {
-        self::prepareLog($channel, 'ERROR', $message, $context);
+        return self::prepareLog($channel, 'ERROR', $message, $context);
     }
 
     /**
@@ -37,9 +37,21 @@ class Logger
      * @param string $message
      * @param array $context
      */
-    public static function info(string $channel, string $message, array $context = [])
+    public static function info(string $channel, string $message, array $context = []): bool
     {
-        self::prepareLog($channel, 'INFO', $message, $context);
+        return self::prepareLog($channel, 'INFO', $message, $context);
+    }
+    
+    /**
+     * Warning Severity Log
+     *
+     * @param string $channel
+     * @param string $message
+     * @param array $context
+     */
+    public static function warning(string $channel, string $message, array $context = []): bool
+    {
+        return self::prepareLog($channel, 'WARNING', $message, $context);
     }
 
     /**
@@ -49,11 +61,11 @@ class Logger
      * @param string $message
      * @param array $context
      */
-    public function prepareLog(string $channel, string $severity, string $message, array $context = [])
+    public function prepareLog(string $channel, string $severity, string $message, array $context = []): bool
     {
         $bt = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 1);
 
-        self::writeLog([
+        return self::writeLog([
             'channel' => $channel,
             'message' => $message,
             'bt' => $bt,
@@ -72,7 +84,7 @@ class Logger
     {
         $date = date('Y-m-d');
         $dir = dirname(__DIR__) . "/../storage/logs";
-        self::$logFile = "$dir/{$channel}-log-{$date}.log";
+        self::$logFile = "$dir/{$channel}-{$date}.log";
 
         // Check if directory /logs exists
         if (! file_exists($dir)) {
@@ -96,26 +108,33 @@ class Logger
      *
      * @param array $params
      */
-    protected function writeLog(array $params)
+    protected function writeLog(array $params): bool
     {
-        // Create Folder
-        self::createLogFile($params['channel']);
+        try {
+            // Create Folder
+            self::createLogFile($params['channel']);
 
-        $time = date('Y-m-d H:i:s');
-        $context = json_encode($params['context']);
-        $caller = array_shift($params['bt']);
-        $btLine = $caller['line'];
-        $btPath = $caller['file'];
+            $time = date('Y-m-d H:i:s');
+            $context = json_encode($params['context']);
+            $caller = array_shift($params['bt']);
+            $btLine = $caller['line'];
+            $btPath = $caller['file'];
 
-        $severityLog = is_null($params['severity']) ? "[N/A]" : "[{$params['severity']}]";
-        $timeLog = is_null($time) ? "[N/A] " : "[{$time}] ";
-        $messageLog = is_null($params['message']) ? "N/A" : "{$params['message']}";
-        $contextLog = empty($params['context']) ? "" : "{$context}";
-        $pathLog = is_null($btPath) ? "[N/A] " : "[{$btPath}] ";
-        $lineLog = is_null($btLine) ? "[N/A] " : "[{$btLine}] ";
+            $severityLog = is_null($params['severity']) ? "[N/A]" : "[{$params['severity']}]";
+            $timeLog = is_null($time) ? "[N/A] " : "[{$time}] ";
+            $messageLog = is_null($params['message']) ? "N/A" : "{$params['message']}";
+            $contextLog = empty($params['context']) ? "" : "{$context}";
+            $pathLog = is_null($btPath) ? "[N/A] " : "[{$btPath}] ";
+            $lineLog = is_null($btLine) ? "[N/A] " : "[{$btLine}] ";
 
-        $file = fopen(self::$logFile, 'a');
-        fwrite($file, "{$severityLog} {$timeLog}: {$pathLog}{$lineLog} - {$messageLog} - [{$contextLog}] " . PHP_EOL);
-        fclose($file);
+            $file = fopen(self::$logFile, 'a');
+            fwrite($file, "{$severityLog} {$timeLog}: {$pathLog}{$lineLog} - {$messageLog} - [{$contextLog}] " . PHP_EOL);
+            fclose($file);
+
+            return true;
+        } catch (\Exception $ex) {
+
+            return false;
+        }
     }
 }

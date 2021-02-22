@@ -9,15 +9,47 @@ use App\Helpers\Logger;
 class TransactionService
 {
 
+    /**
+     * Message broker service
+     *
+     * @var $messageBrokerService
+     */
     private $messageBrokerService;
 
+    /**
+     * Transaction Repository
+     *
+     * @var $transactionRepository
+     */
     private $transactionRepository;
 
+    /**
+     * Status of response
+     *
+     * @var $status
+     */
     private $status;
 
+    /**
+     * Message of response
+     *
+     * @var $message
+     */
     private $message;
 
+    /**
+     * Data for response
+     *
+     * @var $data
+     */
     private $data;
+
+    /**
+     * Queue name for transactions
+     * 
+     * @var string
+     */
+    private $queueName = 'transactions_queue';
 
     /**
      * Transaction Service Constructor
@@ -39,7 +71,7 @@ class TransactionService
      */
     public function queueTransaction(array $params): TransactionService
     {
-        $response = $this->messageBrokerService->publish('product_queue', $params)->handleApiResponse();
+        $response = $this->messageBrokerService->publish($this->queueName, $params)->handleApiResponse();
 
         $this->status = $response['status'];
         $this->message = 'Transaction queued successfully.';
@@ -53,7 +85,7 @@ class TransactionService
      */
     public function processTransactions()
     {
-        $this->messageBrokerService->consume('product_queue', [
+        $this->messageBrokerService->consume($this->queueName, [
             $this,
             'workerCallback'
         ]);
@@ -64,7 +96,7 @@ class TransactionService
      *
      * @param object $message
      */
-    public function workerCallback($message)
+    public function workerCallback($message): bool
     {
         try {
             $transaction = json_decode($message->body, true);
@@ -78,9 +110,15 @@ class TransactionService
             echo ' [x] Received ', $message->body, "\n";
             sleep(substr_count($message->body, '.'));
             echo " [x] Done\n";
+
+            return true;
         } catch (\Exception $ex) {
-            
-            Logger:error('worker', 'Error in transaction',['content' => $message->body]);
+
+            Logger::error('worker', 'Error in transaction', [
+                'content' => $message->body
+            ]);
+
+            return false;
         }
     }
 
@@ -108,7 +146,7 @@ class TransactionService
      * @param string $variantId
      * @return bool
      */
-    protected function isDuplicateTransaction(int $sku, string $variantId): bool
+    public function isDuplicateTransaction(int $sku, string $variantId): bool
     {
         $transactions = $this->getExistingTransactions();
 
@@ -148,12 +186,14 @@ class TransactionService
      * @param string $variantId
      * @return bool
      */
-    protected function isDuplicateVariantSku(array $transaction, int $sku, string $variantId): bool
+    public function isDuplicateVariantSku(array $transaction, int $sku, string $variantId): bool
     {
+        // If any variant_id already exists return true
         if ($this->checkByVariantId($transaction['variant_id'], $variantId)) {
             return true;
         }
 
+        // If Sku AND Variant both already exist return true
         if ($this->checkBySkuAndVariantId($transaction, $sku, $variantId)) {
             return true;
         }

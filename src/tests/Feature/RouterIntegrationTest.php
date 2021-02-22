@@ -6,7 +6,7 @@ use App\Helpers\ApiResponse;
 use App\Helpers\Config;
 use App\Helpers\Request;
 
-class RouterTest extends TestCase
+class RouterIntegrationTest extends TestCase
 {
 
     /**
@@ -20,7 +20,7 @@ class RouterTest extends TestCase
 
         $this->assertEquals(ApiResponse::HTTP_NOT_FOUND, $response->getStatusCode());
     }
-    
+
     /**
      * 405 Status code test
      *
@@ -29,7 +29,7 @@ class RouterTest extends TestCase
     public function routerTest405StatusCode()
     {
         $response = Request::makeRequest('GET', Config::get('APP_URL') . '/transactions');
-        
+
         $this->assertEquals(ApiResponse::HTTP_NOT_ALLOWED, $response->getStatusCode());
     }
 }

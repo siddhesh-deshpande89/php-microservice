@@ -16,13 +16,12 @@ class Validator
     /**
      * Validate all rules for a request
      *
+     * @param array $params
      * @param array $data
      * @return array
      */
-    public function validate(array $data): array
+    public function validate(array $params, array $data): array
     {
-        $params = $this->request->getParameters();
-
         $validationErrors = [];
         foreach ($data as $attribute => $rules) {
             $value = $params[$attribute];
