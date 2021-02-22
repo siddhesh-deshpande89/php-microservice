@@ -1,6 +1,5 @@
 /src/vendor
-/src/logs
+/src/.buildpath
+/src/.project
 /logs
 .DS_Store
-/src/storage/cache
-/src/storage/logs
