@@ -1,24 +1,75 @@
 <?php
 namespace App\Controllers;
 
-use Http\Request;
+use App\Helpers\Request;
 use App\Helpers\ApiResponse;
 use App\Services\TransactionService;
+use App\Helpers\Validator;
 
 class TransactionController
 {
 
+    /**
+     * Request helper
+     *
+     * @var $request
+     */
     private $request;
 
+    /**
+     * Validator helper
+     *
+     * @var $validator
+     */
+    private $validator;
+
+    /**
+     * Transaction service
+     *
+     * @var $transactionService
+     */
     private $transactionService;
 
     /**
-     * TransactionController Constructor
+     * Tranaction controller
+     *
+     * @param TransactionService $transactionService
+     * @param Request $request
+     * @param Validator $validator
      */
-    public function __construct(TransactionService $transactionService, Request $request)
+    public function __construct(TransactionService $transactionService, Request $request, Validator $validator)
     {
         $this->transactionService = $transactionService;
         $this->request = $request;
+        $this->validator = $validator;
+    }
+
+    /**
+     * Validatation for transaction queue request
+     *
+     * @return
+     */
+    private function validateQueueRequest(): array
+    {
+        $rules = [
+            'sku' => [
+                'required',
+                'integer'
+            ],
+            'id' => [
+                'required',
+                'uuid'
+            ],
+            'title' => [
+                'required'
+            ],
+            'variant_id' => [
+                'required',
+                'uuid'
+            ]
+        ];
+
+        return $this->validator->validate($rules);
     }
 
     /**
@@ -26,21 +77,16 @@ class TransactionController
      */
     public function queueTransaction()
     {
-        // TODO validate request params
-        $params['sku'] = $this->request->getParameter('sku');
+        $validation = $this->validateQueueRequest();
 
+        if ($this->validator->hasErrors($validation)) {
+
+            return ApiResponse::json(ApiResponse::HTTP_BAD_REQUEST, 'Invalid input data', $validation);
+        }
+
+        $params = $this->request->getParameters();
         $response = $this->transactionService->queueTransaction($params)->handleApiResponse();
 
         return ApiResponse::json($response['status'], $response['message'], $response['data']);
-    }
-    
-    public function insertTransaction()
-    {
-        $params['id'] = $this->request->getParameter('id');
-        $params['sku'] = $this->request->getParameter('sku');
-        $params['variant_id'] = $this->request->getParameter('variant_id');
-        $params['title'] = $this->request->getParameter('title');
-        
-        $this->transactionService->insertTransaction($params);
     }
 }

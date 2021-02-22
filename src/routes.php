@@ -8,12 +8,4 @@ return [
             'queueTransaction'
         ]
     ],
-    [
-        'POST',
-        '/test',
-        [
-            'App\Controllers\TransactionController',
-            'insertTransaction'
-        ]
-    ]
 ];

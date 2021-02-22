@@ -2,7 +2,7 @@
 namespace Tests\Feature;
 
 use PHPUnit\Framework\TestCase;
-use App\Helpers\RequestHelper;
+use App\Helpers\Request;
 use Ramsey\Uuid\Uuid;
 use App\Helpers\Config;
 use App\Helpers\ApiResponse;
@@ -11,14 +11,13 @@ class TransactionTest extends TestCase
 {
 
     /**
-     * Transactions Api
+     * Test transactions api with valid data
      *
      * @test
      */
-    public function transactionsApi()
+    public function transactionsApiValidData()
     {
-        // TODO move url to config
-        $response = RequestHelper::makeRequest('POST', Config::get('APP_URL') . '/transactions', [
+        $response = Request::makeRequest('POST', Config::get('APP_URL') . '/transactions', [
             'id' => Uuid::uuid4(),
             'sku' => 5,
             'title' => 'Et quasi quis',
@@ -26,5 +25,15 @@ class TransactionTest extends TestCase
         ]);
 
         $this->assertEquals(ApiResponse::HTTP_OK, $response->getStatusCode());
+    }
+    
+    /**
+     * Test transactions api with invalid data
+     *
+     * @test
+     */
+    public function transactionsApiInvalidData()
+    {
+       // TODO validation test
     }
 }

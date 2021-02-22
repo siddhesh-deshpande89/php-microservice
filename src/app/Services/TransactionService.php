@@ -42,7 +42,7 @@ class TransactionService
         $response = $this->messageBrokerService->publish('product_queue', $params)->handleApiResponse();
 
         $this->status = $response['status'];
-        $this->message = 'Transaction processed successfully.';
+        $this->message = 'Transaction queued successfully.';
         $this->data = $response['data'];
 
         return $this;
