@@ -1,5 +1,11 @@
 # php-microservice
 Handling  api requests using PHP, RabbitMQ Message Broker and Supervisor in Docker container
+
+# Context
+We need to create an application that will receive between 100,000 and 1,000,0000 transactions per minute.
+
+Every transaction is going to happen in a different request, so this means that we can receive up to 1,000,000 different requests per minute.
+
 # Architecture Design
 <img src="../master/architechture.png" width="550" height="450">
 
@@ -18,10 +24,15 @@ Now you should have a docker container running
 To make any changes edit the ```docker-composer.yml``` file.
 
 ### Commands
-We will run CLI commands in our docker container. Go to CLI of "APP" container either from dashboard or
+We will run CLI commands in our docker container. Go to CLI of "APP" container either from dashboard or give following
+command based on your container ID.
 
 ``` docker exec -it [container_hash] /bin/sh; exit```
 
+To get your App container hash give the following command ```docker ps``` and you will see list of
+containers. Choose the ```app``` container id.
+
+Please wait for composer installer service to finish installing all dependencies. Then proceed.
 
 ### Migrations and Seeders
 Once you are in the App container, go to src folder and execute migrations
